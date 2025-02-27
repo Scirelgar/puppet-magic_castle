@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: puppet/pdk:latest
+    defaults:
+      run:
+        working-directory: site/profile
 
     steps:
       - name: Checkout code
@@ -15,14 +18,19 @@ jobs:
 
       - name: Run PDK version
         run: pdk --version
-        continue-on-error: false
 
       - name: Run PDK validate
-        run: pdk validate
-        working-directory: site/profile
+        run: |
+          echo "results=${{github.workspace}}/site/profile/pdk_validate_results.txt" >> $GITHUB_ENV
+          pdk validate --format=text:pdk_validate_results.txt
         continue-on-error: true
+
+      - name: Annotate PR with PDK validation results
+        run: |
+          .github/scripts/annotate.sh "$results" true
+        working-directory: ${{ github.workspace }}
 
       - name: Run PDK unit test
         run: pdk test unit
-        working-directory: site/profile
+
         continue-on-error: true
