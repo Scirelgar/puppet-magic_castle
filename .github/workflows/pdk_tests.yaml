@@ -26,8 +26,7 @@ jobs:
         continue-on-error: true
 
       - name: Annotate PR with PDK validation results
-        run: |
-          .github/scripts/annotate.sh "$results" true
+        run: .github/scripts/annotate.sh "$results" true # true to show only errors and ignore warnings
         working-directory: ${{ github.workspace }}
 
       - name: Run PDK unit test
