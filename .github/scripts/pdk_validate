@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+
+import xml.etree.ElementTree as et
+import os
+import subprocess
+import sys
+
+PUPPET_MODULE="site/profile"
+OUTPUT_FILE="pdk_validate_results.xml"
+
+def pdk_validate(output_file):
+    """
+    Run pdk validate
+
+    Args:
+        output_file (str): The output file to write the results to
+    """
+    try:
+        subprocess.call(["bash", "-c", f"pdk validate --format=junit:{output_file}"], cwd=PUPPET_MODULE)
+    except Exception as e:
+        print(e)
+        return False
+    return True
+
+def parse_pdk_validate_results(output_file) -> et.ElementTree:
+    """
+    Parse the xml file and return the tree
+
+    Args:
+        output_file (str): The output file to parse
+
+    Returns:
+        et.ElementTree: The parsed tree
+    """
+    tree = et.parse(output_file)
+    return tree
+
+def add_annotation(testcase:et.Element):
+    """
+    Writes Github commands to stdout to add annotations to the Github Actions
+
+    Args:
+        testcase (et.Element): The testcase to add the annotation for
+    """
+    check=testcase[0].get("classname")
+    file,line,column=testcase[0].get("name").split(":")
+    kind="error" if testcase[1].get("type")=="error" else "warning"
+    message=testcase[1].get("message")
+    print(f"::{kind} file={PUPPET_MODULE}/{file},line={line},col={column},title={check}::{message}")
+
+def scan_testcases(only_errors:bool):
+    """
+    Scan the test cases
+
+    Args:
+        only_errors (bool): Only scan for errors
+    """
+    root = parse_pdk_validate_results(f"{PUPPET_MODULE}/{OUTPUT_FILE}").getroot()
+    
+    for testcase in root.iter("testcase"):
+        failure = testcase.find("failure")
+        if failure is None:
+            continue
+        if only_errors and failure.get("type")!="error":
+            continue
+        add_annotation([testcase, failure])
+
+def main(only_errors):
+    if pdk_validate(OUTPUT_FILE):
+        scan_testcases(only_errors)
+    else:
+        print("Failed to run pdk validate")
+
+if __name__ == "__main__":
+    main(sys.argv[1]=="true")
