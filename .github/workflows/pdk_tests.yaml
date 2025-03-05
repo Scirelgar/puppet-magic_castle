@@ -6,12 +6,17 @@ jobs:
   run-pdk-tests:
     name: Run PDK tests
     runs-on: ubuntu-latest
-    container:
-      image: puppet/pdk:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup PDK
+        run: |
+          wget https://apt.puppet.com/puppet-tools-release-jammy.deb
+          sudo dpkg -i puppet-tools-release-jammy.deb
+          sudo apt-get update
+          sudo apt-get install pdk
 
       - name: Run PDK validate
         run: .github/scripts/pdk_validate true
