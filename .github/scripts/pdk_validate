@@ -3,7 +3,7 @@
 import xml.etree.ElementTree as et
 import sys
 
-PUPPET_MODULE="site/profile"
+PUPPET_MODULE=""
 
 def parse_pdk_validate_results() -> et.ElementTree:
     """
@@ -49,4 +49,6 @@ def main(only_errors):
     scan_testcases(only_errors)
 
 if __name__ == "__main__":
+    if "--module" in sys.argv:
+        PUPPET_MODULE=sys.argv[sys.argv.index("--module")+1]
     main(sys.argv[1]=="--only-errors")

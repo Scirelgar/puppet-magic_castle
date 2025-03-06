@@ -6,6 +6,8 @@ jobs:
   run-pdk-tests:
     name: Run PDK tests
     runs-on: ubuntu-latest
+    env:
+      PUPPET_MODULE: site/profile
 
     steps:
       - name: Checkout code
@@ -19,10 +21,10 @@ jobs:
           sudo apt-get install pdk
 
       - name: Run PDK validate
-        run: pdk validate --format=junit | ${{github.workspace}}/.github/scripts/pdk_validate --only-errors
-        working-directory: site/profile
+        run: pdk validate --format=junit | "${{github.workspace}}/.github/scripts/pdk_validate" --only-errors --module ${{env.PUPPET_MODULE}}
+        working-directory: "${{env.PUPPET_MODULE}}"
 
       - name: Run PDK unit test
         run: pdk test unit
-        working-directory: site/profile
         continue-on-error: true
+        working-directory: "${{env.PUPPET_MODULE}}"
