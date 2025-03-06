@@ -19,7 +19,8 @@ jobs:
           sudo apt-get install pdk
 
       - name: Run PDK validate
-        run: .github/scripts/pdk_validate true
+        run: pdk validate --format=junit | ${{github.workspace}}/.github/scripts/pdk_validate --only-errors
+        working-directory: site/profile
 
       - name: Run PDK unit test
         run: pdk test unit
