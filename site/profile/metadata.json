@@ -1,5 +1,5 @@
 {
-  "name": "scirelgar-profile",
+  "name": "cmdntrf-profile",
   "version": "0.1.0",
   "author": "cmd-ntrf",
   "summary": "",
@@ -12,29 +12,15 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7",
         "8",
         "9"
-      ]
-    },
-    {
-      "operatingsystem": "OracleLinux",
-      "operatingsystemrelease": [
-        "7"
       ]
     },
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "7",
         "8",
         "9"
-      ]
-    },
-    {
-      "operatingsystem": "Scientific",
-      "operatingsystemrelease": [
-        "7"
       ]
     },
     {
@@ -82,6 +68,6 @@
     }
   ],
   "pdk-version": "3.4.0",
-  "template-url": "https://github.com/puppetlabs/pdk-templates#3.4.0",
-  "template-ref": "tags/3.4.0-0-gd3cc13f"
+  "template-url": "https://github.com/puppetlabs/pdk-templates#main",
+  "template-ref": "tags/3.4.0.3-0-g8fb22fc"
 }
